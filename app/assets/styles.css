@@ -1,0 +1,408 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body{
+  font-family: 'Roboto';
+  padding: 0;
+  text-align: justify;
+}
+
+
+hr {
+  background: linear-gradient(to right, #1ba8c4, #97c792) ;
+  height: 3px;
+  border: 0px
+}
+
+h1{
+	text-align:center;
+}
+
+
+/* .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #333;
+    color: white;
+} */
+
+
+
+
+.encabezado {
+  height: 70px;
+  display: flex;
+  vertical-align: right;
+  align-items: center;
+  margin-bottom: 10px;
+  border: 0px solid #eee ;
+  border-radius: 0px;
+}
+
+.encabezado img{
+	height:100%;	
+}
+
+
+
+.chatbox {
+  background-color: #eee;
+  padding-bottom: 20px;
+  border-radius: 10px;
+  margin: 2% 5%;
+}
+
+
+.chat-history {
+  height: 300px;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+
+.mensaje-icono-user{
+	width: 30px;
+	margin-left: 1rem;
+	vertical-align: top;
+	display: inline-block;
+	float: right;
+}
+
+.mensaje-icono-chatbot{
+	width: 30px;
+	margin-right: 1rem;
+	vertical-align: top;
+	display: inline-block;
+	float: left;
+}
+
+
+.user-message {
+  background-color: #d6ecd5;
+  box-shadow: 2px 2px 10px 0px gray;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  max-width: 45%;
+  display: inline-block;
+  float: right;
+}
+
+
+.chatbot-message {
+  background-color: #ceecef;
+  box-shadow: 2px 2px 10px 0px gray;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  max-width: 45%;
+  display: inline-block;
+}
+
+.chatbot-message button{
+	background-color: #d6ecd5;
+	box-shadow: 2px 2px 10px 0px gray;
+	margin: 0.5rem;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+.chat-interaction {
+  width: 100%;
+  height:35px;
+  display: flex;
+  justify-content: center;
+  margin-top:1rem;
+}
+
+.chat-interaction button:hover {opacity: 1}
+
+.chat-interaction img {
+	height:30px;
+}
+
+
+.barra-input {
+  width: 90%;
+  border: 1px solid #eeeeeee2;
+  padding-left: 20px;
+  border-radius: 10px;
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+  border-right: 1px solid #fff;
+  
+}
+.recuadro-boton {
+  border: 1px solid #eeeeeee2;
+  border-radius: 10px;
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  border-left: 1px solid #fff;
+  background-color: #fff;
+}
+
+
+
+
+table {
+			border-collapse: collapse;
+			width: 100%;
+			font-family: Arial, sans-serif;
+			color: #444;
+			text-align: center;
+			border: 1px solid #f2f2f2;
+		}
+
+table th {
+	background-color: #f2f2f2;
+	padding: 8px;
+	font-size: 18px;
+	font-weight: bold;
+	border: 1px solid #ddd;
+}
+
+table td {
+	padding: 8px;
+	border: 1px solid #ddd;
+}
+
+table tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+table tr:hover {
+	background-color: #ddd;
+}
+
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f2f2;
+  
+}
+
+.logo-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  height: 100%;
+  background-color: #f2f2f2; /* Cambiado para que ocupe el 100% de la mitad vertical */
+}
+
+
+
+.credentials-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Alinear el contenido al inicio */
+  align-items: flex-start; /* Alinear el contenido a la izquierda */
+  padding: 20px;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.minilogo {
+  max-width: 8%; /* Ajustar el tamaño del mini logotipo según tus necesidades */
+  margin-bottom: 110px;
+}
+
+.login-title {
+  text-align: left;
+  color: #58595b;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 75px;
+  margin-bottom: 2px;
+}
+.login-subtitle1 {
+  text-align: left;
+  color: #58595b;
+  font-size: 37px;
+  margin-bottom: 20px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+.input-container {
+  margin-bottom: 15px;
+  width: 70%;
+  margin-left: 100px;
+}
+
+.login-label {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-button {
+  width: 20%;
+  font-size: 16px;
+  background-color: #97c793;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 40px;
+}
+.login-output {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 16px;
+  color: #ff0000;
+}
+
+
+.container {
+display: flex;
+border-image: linear-gradient(to left, #1ba8c4, #97c792) 1;
+border-width: 1px;
+border-style: solid;
+border-radius: 5px;
+margin: 0 5%;
+padding:1rem;
+}
+
+
+.logo {
+  max-width: 90%;
+}
+
+.questions{
+width: 45%;
+}
+
+
+
+.como-preguntar{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right:1rem;
+	background-color:#fff;
+	border-color:#fff;
+
+}
+
+
+.typologies-tickets {
+  width: 100%;
+  height:35px;
+  display: flex;
+  margin-top:1rem;
+  margin-left:1rem;
+}
+
+.typologies-tickets button:hover {opacity: 1}
+
+.typologies-tickets img {
+	height:30px;
+}
+
+.typologies-values{
+	display:none;
+}
+
+.typologies-values2{
+	display:inline-block;
+}
+
+.tickets-tipos{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right:1rem;
+	background-color:#fff;
+	border-color:#fff;
+}
+
+.tickets-tipos2{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right:1rem;
+	background-color:#d6ecd5;
+	border-color:#d6ecd5;
+}
+
+
+
+
+
+	
+.dash-table-tooltip {
+    width: fit-content;
+    /* max and min width are both set to 300px in the dash stylesheet. Override them with your own definitions. */
+    max-width: 300px;
+    min-width: unset;  
+}
+
+.dash-table-tooltip img{
+	width: auto;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    border-collapse: collapse;
+    font-family: Roboto;
+    --accent: black;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th.dash-filter input.dash-filter--case--sensitive {
+    border-color: black;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 2px;
+    color: black;
+}
+
+.dash-table-container .dash-spreadsheet-container {
+    overflow-x: auto;
+	width:80%;
+	display:inline-block;
+}
+
+.table-wrapper {
+	width:80%;
+	display: inline-block;
+}
+
+.image-ticket{
+	width:20%;
+	display: inline-block;
+	  vertical-align: top;
+}
+
+.image-ticket img{
+  width: 100%;
+}
+
+.dash-spreadsheet-menu button{
+	color: red;
+}
+
+
+
+
+.tabs{
+	margin: 2% 5%;
+}
