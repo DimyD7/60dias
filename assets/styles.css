@@ -1,0 +1,118 @@
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #333;
+    color: white;
+}
+
+.chat-history {
+    height: 200px;
+    padding: 1rem;
+    background-color: #eee;
+	border-radius: 10px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column-reverse
+}
+
+
+
+.chat-history .user-message {
+  background-color: #d6ecd5;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: right;
+  max-width: 50%;
+  margin-left: auto;
+}
+
+.chat-history .chatbot-message {
+  background-color: #ceecef;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: left;
+  max-width: 50%;
+  margin-right: auto;
+}
+
+
+
+.questions {
+  width: 50%;
+}
+
+.chat-interaction {
+  width: 50%;
+}
+
+.chat-interaction input {
+    width: 90%;
+	  height:25px;
+	  margin:5px 0px 10px 0px;
+    padding: 0.5rem;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.chat-interaction button {
+  width: 10%;
+  background-color: #5a98e4; /* Color de fondo */
+  border: none; /* Sin borde */
+  color: white; /* Color del texto */
+  padding: 1rem; /* Espaciado interno */
+  text-align: center; /* Alineación del texto */
+  text-decoration: none; /* Sin decoración de texto */
+  font-size: 16px; /* Tamaño de fuente */
+  margin: 0px 0px 10px 0px; /* Margen */
+  opacity: 0.6;
+  cursor: pointer; /* Cambio de cursor al pasar el mouse */
+  border-radius: 10px; /* Borde redondeado */
+}
+
+.chat-interaction button:hover {opacity: 1}
+
+.tabs {
+  width: 100%;
+}
+
+table {
+			border-collapse: collapse;
+			width: 100%;
+			font-family: Arial, sans-serif;
+			color: #444;
+			text-align: center;
+			border: 1px solid #f2f2f2;
+		}
+
+table th {
+	background-color: #f2f2f2;
+	padding: 8px;
+	font-size: 18px;
+	font-weight: bold;
+	border: 1px solid #ddd;
+}
+
+table td {
+	padding: 8px;
+	border: 1px solid #ddd;
+}
+
+table tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+table tr:hover {
+	background-color: #ddd;
+}
+
+.table-wrapper {
+	max-height: 300px;
+	overflow-y: auto;
+	margin-top: 20px;
+}
