@@ -1,6 +1,5 @@
 # - *- coding: utf- 8 - *-
 
-import flask
 from flask import Flask
 import re
 import pymssql
@@ -10,7 +9,9 @@ import openai
 import json
 from dash import Dash, dcc, html, Input, Output, State, dash_table, callback_context, ALL
 import dash_loading_spinners as dls
-import dash
+import requests
+import os
+import base64
 
 
 # Configurar el registro
@@ -25,13 +26,12 @@ context = []
 conversacion = []
 consulta=""
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 servidor = Flask(__name__)
 external_stylesheets = ['assets/styles.css']
 app = Dash(server=servidor, external_stylesheets=external_stylesheets)
 app.title = 'Dashboard'
-
 
 ########################################################################################### LOGIN #####################################################################################################
 login_layout = html.Div(
@@ -113,54 +113,44 @@ header = html.Div(
     children=[
         html.Div(
             className='encabezado',
-            children=[
-                html.Img(
-                    id="img",
-                    src=app.get_asset_url('images/logo.png')
-                ),
+            children=[html.Div(
+                className='encabezado-logo',children=[
+                    html.Img(
+                        id="img",
+                        src=app.get_asset_url('images/logo.png'),
+                        className='encabezado-img',
+                    )]),
+                    html.Div(
+                        className='desconectar',
+                        children=[
+                            html.Button(
+                                children=[
+                                    html.Div(
+                                        children=[
+                                            html.Img(id="img", src=app.get_asset_url('images/opcion-de-cerrar-sesion.png'),title='Desconectar'),  # Icono de desconectar utilizando dash-fontawesome
+                                            html.Span('Desconectar')  # Texto del botón
+                                        ],
+                                        className='desconectar-button'
+                                    )
+                                ],
+                                id='desconectar',
+                                n_clicks=0
+                            )
+                        ]
+                    ),
                 html.Div(
                     className='usuario',
                     children=[
-                        html.Button(
+                        html.Div(
                             children=[
-                                html.Div(
-                                    children=[
-                                        html.Img(id="img", src=app.get_asset_url('images/usuario-de-perfil.png'), style={'width': '15%', 'margin-bottom': '5px',"height":"30px"}),  # Icono de usuario utilizando dash-fontawesome
-                                        html.Span(id='username-display', children=[])  # Texto del botón (se actualiza con el nombre de usuario)
-                                    ],
-                                    style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center'}
-                                )
+                                html.Img(id="img", src=app.get_asset_url('images/usuario-de-perfil.png')),  # Icono de usuario utilizando dash-fontawesome
+                                html.Span(id='username-display', children=[])  # Texto del botón (se actualiza con el nombre de usuario)
                             ],
-                            id='usuario',
-                            n_clicks=0,
-                            style = {'background-color':'#fff','border-color':'#fff','width': '100%'}
-                        )
-                    ],
-                    style={'margin-left': 'auto','width':'5%'}
-                ),
-                html.Div(
-                    className='desconectar',
-                    children=[
-                        html.Button(
-                            children=[
-                                html.Div(
-                                    children=[
-                                        html.Img(id="img", src=app.get_asset_url('images/opcion-de-cerrar-sesion.png'), style={'width': '15%', 'margin-bottom': '5px',"height":"30px"}),  # Icono de desconectar utilizando dash-fontawesome
-                                        html.Span('Desconectar')  # Texto del botón
-                                    ],
-                                    style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center'}
-                                )
-                            ],
-                            id='desconectar',
-                            n_clicks=0,
-                            style = {'background-color':'#fff','border-color':'#fff',"height":"60px",'width': '100%'}
-                        )
-                    ],
-                    style={'margin-left': '30px', 'margin-right': '20px','width':'5%'}
-                ),
+                        className='usuario-button')
+                    ]
+                )
             ]
         ),
-
         html.Hr()
     ]
 )
@@ -179,7 +169,7 @@ chat =dls.Hash(html.Div(
 chat_interaccion = html.Div([
         html.Button(className='como-preguntar',children=[html.Img(id="img", src=app.get_asset_url('images/ayudar.png'),title='Como preguntar')],id='como-preguntar',n_clicks=0),
         dcc.Input(id='input',className="barra-input", type='text', value='',placeholder="Escriba aquí su consulta..."),
-        html.Button(id='chat-button',n_clicks=0, children=html.Img(id="img_button",src=app.get_asset_url('images/send_button.png')),className='recuadro-boton')
+        html.Button(id='chat-button',n_clicks=0, children=[html.Img(id="img_button",src=app.get_asset_url('images/send_button0.png'))],className='recuadro-boton0',disabled=True)
     ], className='chat-interaction')
 
 
@@ -341,13 +331,13 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
 
         conversacion.insert(0,mensaje_icono_user)
         
-        mensaje_icono_chat = html.Div(
-            children=[
-                html.Img(id="img", src=app.get_asset_url('images/bot.png'),className='mensaje-icono-chatbot') ,
-                html.Div(f"{response}", className='chatbot-message')]
-        )
+        # mensaje_icono_chat = html.Div(
+        #     children=[
+        #         html.Img(id="img", src=app.get_asset_url('images/bot.png'),className='mensaje-icono-chatbot') ,
+        #         html.Div(f"{response}", className='chatbot-message')]
+        # )
         
-        conversacion.insert(0,mensaje_icono_chat)
+        # conversacion.insert(0,mensaje_icono_chat)
         
         
         df=get_data()
@@ -416,7 +406,8 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
         context = [{'role': 'system', 'content': f"""Eres un experto consultor de datos.
                     Te van a hacer preguntas sobre los datos almacenados en la vista Tickets_Analytics que esta almacenada en una BBDD de sql server. 
                     Sólo puedes ofrecer información de esta vista, de ninguna otra. Para ello vas a generar consultas SQL Server para poder obtener los datos.
-                        
+                    Esta consulta sql server debe empezar por SELECT y terminar por punto y coma.
+        A continuación te doy información de las columnas que tiene dicha vista.                
         Tickets_Analytics:
         - idTicket: identificador del ticket
         - cantidad: dependiendo de la tipología puede indicar una u otra cosa 
@@ -431,18 +422,13 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
             - Taxis: Muestra los tickets que son de tipo taxi
             - Restaurantes: Muestra los tickets que son de tipo restaurante
         - Empleado: Nombre del empleado asociado al ticket
-        - url: url asociada de la imagen de cada ticket
+        - url: url asociada de la imagen de cada ticket, cada vez que te pregunten por los tickets incluye este campo en la consulta
         - idCliente: Identificador del cliente, tipo numéricio
         - Cliente: Nombre del cliente
         - idGrupo: Identificador del grupo, tipo numércio. Cada grupo sólo puede ver sus tickets, por ello debes tenerlo en cuenta a la hora de mostrar las consultas. Valor es ```{cliente}```.
         No debes permitir que se puedan consultar los tiques para otro identificador que no coincida con ```{cliente}```
-
         
-        Debes devolver al usuario siempre una respuesta amable indicando que tiene a disposición una tabla con los datos solicitados y que puede visualizarlos
-        en un gráfico y tambien debes proporcionar la consulta sql server que generes, esta debe empezar por SELECT y terminar por punto y coma.
-        
-        Quiero que saludes cordialmente y preguntes qué información acerca de los tickets desea conocer. 
-        A continuación te muestro un par de ejemplos de cuestiones que te pueden hacer:
+        A continuación te muestro un par de ejemplos de preguntas que te pueden hacer, caul debe ser la respuesta y cual la consulta generada:
              - Ejemplo 1: 
                  - Pregunta: Productos más consumidos
                  - Respuesta: Aquí tienes los 10 productos que más se han consumido
@@ -451,22 +437,23 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
                  - Pregunta: Dime el restaurante donde más barato está el agua
                  - Respuesta: Aquí tienes el ticket donde el agua está más barata
                  - Consulta: SELECT TOP 1 idTicket, precio FROM Tickets_Analytics WHERE subcategoria = 'agua' ORDER BY precio ASC where idGrupo = ```{cliente}```;
-             
+             - Ejemplo 3:
+                 - Pregunta: Tickets mayor precio
+                 - Respuesta: Aquí tienes el top 10 de los tickets de mayor precio
+                 - Consulta: SELECT TOP 10 idTicket, precio, url FROM Tickets_Analytics WHERE idGrupo = ```{cliente}``` ORDER BY precio DESC
+
+        
+        La primera vez quiero que saludes cordialmente y preguntes qué información acerca de los tickets desea conocer. 
+        
+        Una vez que se te pregunte algo debes devolver al usuario siempre una respuesta amable indicando que a continuaicón tiene una análisis de los datos y que tambien dispone
+        de una tabla con los datos solicitados y que puede visualizarlos en un gráfico.
+                    
         Si pregunta cualquier otra cosa, responde amablemente que sólo ofreces información acerca de los tickes y muestrale alguno de los ejemplos anteriores.
         
-        Da una bienvenida formal y amable como respuesta a este mensaje (no menciones el idGrupo en el mensaje de bienvenida) y el resto de inofrmación que te proporcioné es para futuras preguntas. Si te preguntan en algún momento por las columnas devuelve también la consulta sql server.
+        Si te preguntan en algún momento por las columnas devuelve también la consulta sql server que extrae los nombres de las columnas de una vista.
         """}]
 
         response = get_completion_from_messages(context)
-        '''
-        # Actualiza el historial de conversación
-        mensaje_icono = html.Div(
-            className='mensaje-icono-chatbot',
-            children=[
-                html.Img(id="img", src=app.get_asset_url('images/bot.png'),style = {'width':'5%'}) ,
-                html.Div(f"{response}", className='chatbot-message')]
-        )
-        '''
         
         mensaje_icono = html.Div(
             children=[
@@ -474,8 +461,6 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
                 html.Div(f"{response}", className='chatbot-message')]
         )
         
-        #conversacion.insert(0,html.Img(id="img", src=app.get_asset_url('images/bot.png'),className='mensaje-icono-chatbot'))
-        #conversacion.insert(0,html.Div(response, className='chatbot-message'))
         conversacion.insert(0,mensaje_icono)
         
 
@@ -490,6 +475,18 @@ def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0)
     )
 #     print(str(response.choices[0].message))
     return response.choices[0].message["content"]
+
+
+@app.callback(
+    [ Output('chat-button', 'children'),Output('chat-button', 'className'),Output('chat-button', 'disabled')],
+    [Input('input', 'value')])
+
+def button_send(input_value):
+    if input_value:      
+        return html.Img(id="img_button",src=app.get_asset_url('images/send_button1.png')),'recuadro-boton1',not input_value
+    else:
+        return html.Img(id="img_button",src=app.get_asset_url('images/send_button0.png')),'recuadro-boton0','disabled'
+
 
 @app.callback(
     Output('input', 'value',allow_duplicate=True),
@@ -539,33 +536,31 @@ def tipos_tickets(n_clicks):
 def update_data(output_children):
    
     df=get_data()
-    
-    df["URL"]='https://img.freepik.com/foto-gratis/dos-tickets-amarillos_1101-56.jpg?1&w=826&t=st=1689403503~exp=1689404103~hmac=09d9c2a2e95e2944bf9ce0375e93eea272cb074cd0b7d73b2a58bc99020510ce'
-    
+
     
     if len(df)>0:
-        '''
-        tab1=html.Div([
-            html.Table([
-                html.Thead(
-                    html.Tr([html.Th(col) for col in df.columns])
-                ),
-                html.Tbody([
-                    html.Tr([
-                        html.Td(df.iloc[i][col]) for col in df.columns
-                    ]) for i in range(len(df))
-                ])
-            ])
-        ])
-        return tab1
-        '''
+
+        # columns=[]
+        # for i in df.columns:
+        #     if i == "url":
+        #         columns.append({"name": i, "id": i,"deletable": True,  "hidden": True})
+        #     else:
+        #         columns.append({"name": i, "id": i,"deletable": True, "hidden": True})
+        
         tab1 = dash_table.DataTable(id='table',
                            
-                data=df.to_dict("records"),
+                data=df.to_dict("records"),               
                 columns=[{"name": i, "id": i,"deletable": True} for i in df.columns],
                 column_selectable="single",
                 fixed_columns={'headers': True},
+                hidden_columns=["url"],
+                #toggleable=False,
+                #export_format='csv',
                 export_format='csv',
+                #download_button=True,
+                #download_format="csv",
+                #download_button_text="Descargar",
+                #download_icon="download",
                 filter_action="native",
                 sort_action="native",
                 sort_mode='multi',
@@ -640,6 +635,7 @@ def get_data():
         return df
 
 
+
 ###imagen ticket
 @app.callback(
     Output('image-container', 'children'),
@@ -649,9 +645,25 @@ def get_data():
 def display_image(active_cell, data):
     if active_cell:
         ticket = data[active_cell['row']]['idTicket']
-        image_url = data[active_cell['row']]['URL']
+        image_url = data[active_cell['row']]['url']
         if active_cell['column_id'] == 'idTicket':
-            return html.Div([html.H3(ticket),html.Img(src=image_url)])
+            
+            response = requests.get(image_url)
+        
+            if response.status_code == 200:
+                file_name = os.getcwd()+'/assets/ticket.pdf'
+                with open(file_name, "wb") as file:
+                    file.write(response.content)
+            
+            with open(os.getcwd()+'/assets/ticket.pdf', 'rb') as pdf:
+                pdf_data = base64.b64encode(pdf.read()).decode('utf-8')
+            
+            return html.Div([html.H3(ticket),html.ObjectEl(
+                data='data:application/pdf;base64,'+ pdf_data,
+                type="application/pdf",
+                style={"width": "400px", "height": "600px"}
+            )])
+
 
 
 ### Parte de la web en la que se muestra el gráfico con sus respectivos ejes
@@ -732,4 +744,4 @@ def display_page(pathname):
 ########################################################################################################################################################################################################
 # Iniciar la aplicación
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, dev_tools_hot_reload=False)
