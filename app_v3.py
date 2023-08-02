@@ -32,8 +32,6 @@ servidor = Flask(__name__)
 external_stylesheets = ['assets/styles.css']
 app = Dash(server=servidor, external_stylesheets=external_stylesheets)
 app.title = 'Dashboard'
-app.config.suppress_callback_exceptions = True
-server=app.server
 
 ########################################################################################### LOGIN #####################################################################################################
 login_layout = html.Div(

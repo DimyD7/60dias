@@ -12,6 +12,7 @@ import dash_loading_spinners as dls
 import requests
 import os
 import base64
+from prompts import *
 
 
 # Configurar el registro
@@ -26,12 +27,13 @@ context = []
 conversacion = []
 consulta=""
 
-openai.api_key = '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'
+openai.api_key = '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'
+#openai.api_key = '62df70b9433343b6884ee0d786825dbf'
 
 servidor = Flask(__name__)
 external_stylesheets = ['assets/styles.css']
 app = Dash(server=servidor, external_stylesheets=external_stylesheets)
-app.title = 'Dashboard'
+app.title = 'Tickets'
 app.config.suppress_callback_exceptions = True
 server=app.server
 
@@ -157,6 +159,45 @@ header = html.Div(
     ]
 )
 
+# Preguntas frecuentes
+questions=html.Div(id='container',className='container', 
+                   children=[
+    html.Div(
+        className='faqs',
+        children=[
+            html.Img(id="img", src=app.get_asset_url('images/faqs.png'), className='logo')
+        ]
+    ),
+    html.Div(
+        className='questions',children=[
+            html.H2('Preguntas frecuentes'),
+            dcc.Dropdown(placeholder="Seleccionar una pregunta frecuente...",
+                        id='faqs',
+                        options=[
+                            {'label': 'Dime los empleados que utilizan el taxi, la cantidad de veces que lo usan, el precio que pagan y la distancia que recorren', 'value': 'Dime los empleados que utilizan el taxi, la cantidad de veces que lo usan, el precio que pagan y la distancia que recorren'},
+                            {'label': 'Dame algún otro ejemplo', 'value': 'Dame algún otro ejemplo'},
+                            {'label': 'Muestrame los empleados que más veces usan el taxi', 'value': 'Muestrame los empleados que más veces usan el taxi'},
+                            {'label': 'Muestrame el número de ticktes por mes del año 2022', 'value': 'Muestrame el número de ticktes por mes del año 2022'}
+                        ],
+                        value='')]
+    ),
+    html.Div(
+        className='tipologies',children=[
+            html.H2('Tipologías'),
+            dcc.Checklist(
+                        id='tipologia',
+                        options=[
+                            {'label': 'Taxis', 'value': 'Taxis'},
+                            {'label': 'Restaurantes', 'value': 'Restaurantes'},
+                            {'label': 'Gasolineras', 'value': 'Gasolineras'},
+                        ],
+                        value=[],
+                        inline=True,
+                        labelStyle={"margin-right": "1rem"},
+                        className='typologies-values'
+                    )
+            ])
+    ])
 
 
 # Cuadro de chat
@@ -175,28 +216,10 @@ chat_interaccion = html.Div([
     ], className='chat-interaction')
 
 
-tipos_tickets= html.Div([
-        html.Button(className='tickets-tipos',children=[html.Img(id="img", src=app.get_asset_url('images/factura.png'),title='Tipos de tickets')],id='tipos-tickets',n_clicks=0),
-        dcc.Checklist(
-                    id='tipologia',
-                    options=[
-                        {'label': 'Taxis', 'value': 'Taxis'},
-                        {'label': 'Restaurantes', 'value': 'Restaurantes'},
-                        {'label': 'Gasolineras', 'value': 'Gasolineras'},
-                    ],
-                    value=[],
-                    inline=True,
-                    labelStyle={"margin-right": "1rem"},
-                    className='typologies-values'
-                )
-        ], className='typologies-tickets')
-
 
 zona_chat =  html.Div(className='chatbox',children = [
         chat,
-        chat_interaccion,
-        tipos_tickets
-        
+        chat_interaccion       
     ]
     )
 
@@ -240,7 +263,8 @@ tabs=html.Div(id='tabs',className='tabs',
 ###Layout
 layout_dashboard = html.Div([
     header,
-    html.H1("Consulta tus tickets"),
+    questions,
+    #html.H1("Consulta tus tickets"),
     zona_chat,
     tabs
 ])
@@ -259,18 +283,18 @@ def display_username(pathname):
         return ''
 
 @app.callback(
-    [Output('output', 'children'), Output('eje-x', 'value'), Output('eje-y', 'value'),Output('como-preguntar', 'n_clicks')],
+    [Output('output', 'children'),Output('faqs', 'value'), Output('eje-x', 'value'), Output('eje-y', 'value'),Output('como-preguntar', 'n_clicks')],
     [Input('chat-button', 'n_clicks'),Input('como-preguntar', 'n_clicks')],
-    [State('tipologia', 'value'),State('url', 'pathname'),State('input', 'value'), State('output', 'children')])
+    [State('tipologia', 'value'),State('faqs', 'value'),State('url', 'pathname'),State('input', 'value'), State('output', 'children')])
 
-def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, output_value):
+def collect_messages(n_clicks,como_preguntar,tipologia, faqs,grupo,input_value, output_value):
     global context,conversacion 
         
-    cliente = cliente.split('/')[-1]
+    grupo = grupo.split('/')[-1]
 
     query = f""" SELECT idGrupo
                 from Analytics_Usuarios au 
-                where usuario = '{cliente}'
+                where usuario = '{grupo}'
             """
     
     conn = pymssql.connect(server=host, port=port, user=username_db, password=password_db, database=database)
@@ -278,9 +302,6 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
 
     cursor.execute(query)
     grupo = cursor.fetchone()[0]
-    
- 
-    cliente = grupo
     
     if como_preguntar > 0:
         
@@ -304,7 +325,7 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
         conversacion.insert(0,mensaje_icono_chat) 
         
        
-        return conversacion, '', '', 0
+        return conversacion, '', '', '', 0
      
     elif n_clicks > 0 and input_value:
         
@@ -333,13 +354,13 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
 
         conversacion.insert(0,mensaje_icono_user)
         
-        # mensaje_icono_chat = html.Div(
-        #     children=[
-        #         html.Img(id="img", src=app.get_asset_url('images/bot.png'),className='mensaje-icono-chatbot') ,
-        #         html.Div(f"{response}", className='chatbot-message')]
-        # )
+        mensaje_icono_chat = html.Div(
+            children=[
+                html.Img(id="img", src=app.get_asset_url('images/bot.png'),className='mensaje-icono-chatbot') ,
+                html.Div(f"{response}", className='chatbot-message')]
+        )
         
-        # conversacion.insert(0,mensaje_icono_chat)
+        conversacion.insert(0,mensaje_icono_chat)
         
         
         df=get_data()
@@ -359,18 +380,8 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
             conversacion.insert(0,mensaje_icono_chat) 
         
         else:
-        
-            #df_json = df.to_json(orient='records')
             
-            prompt = f"""
-            Eres un experto consultor de datos. Quiero que me analices los siguiente datos ```{df}```\
-                y me devuelvas formato JSON:
-                    - titulo: basate en la pregunta realizada o en la pregunta sugerida fijate en el contenido de los dos ultimos elementos de ```{context}```
-                    - conclusiones: listado, muestra en 3 y 6.
-                    - resumen: breve parrafo indiando el analisis realizado y la mejor forma de visualizar los gráficos, grafico de barras, de tarta, que poner en valores y en etiquetas.
-                    - preguntas: un listado de preguntas que se pueden hacer como sugerencia para tener más inforamción de los datos. Entre 1 y 5
-                    
-            Sólo muestra el JSON, nada más."""
+            prompt = analisis_datos+ f""" "Quiero que me analices los siguiente datos ```{df}```"""
             
             messages = [{"role": "user", "content": prompt}]
             
@@ -402,58 +413,10 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
            
             conversacion.insert(0,mensaje_icono_chat)  
 
-        return conversacion, '', '', 0
+        return conversacion, '', '',  '', 0
     else:
         # Restablece el contexto y el historial de conversación cuando se carga la página
-        context = [{'role': 'system', 'content': f"""Eres un experto consultor de datos.
-                    Te van a hacer preguntas sobre los datos almacenados en la vista Tickets_Analytics que esta almacenada en una BBDD de sql server. 
-                    Sólo puedes ofrecer información de esta vista, de ninguna otra. Para ello vas a generar consultas SQL Server para poder obtener los datos.
-                    Esta consulta sql server debe empezar por SELECT y terminar por punto y coma.
-        A continuación te doy información de las columnas que tiene dicha vista.                
-        Tickets_Analytics:
-        - idTicket: identificador del ticket
-        - cantidad: dependiendo de la tipología puede indicar una u otra cosa 
-            - número de productos
-        - precio: precio de los productos. Debes tener en cuenta la cantidad, el precio del producto es Precio/Cantidad
-        - personas: núero de personas
-        - categoria: Categoría del producto
-        - subcategoria: Subcatecoría
-        - marca
-        - tipo
-        - Tipologia: Clasificación del ticket
-            - Taxis: Muestra los tickets que son de tipo taxi
-            - Restaurantes: Muestra los tickets que son de tipo restaurante
-        - Empleado: Nombre del empleado asociado al ticket
-        - url: url asociada de la imagen de cada ticket, cada vez que te pregunten por los tickets incluye este campo en la consulta
-        - idCliente: Identificador del cliente, tipo numéricio
-        - Cliente: Nombre del cliente
-        - idGrupo: Identificador del grupo, tipo numércio. Cada grupo sólo puede ver sus tickets, por ello debes tenerlo en cuenta a la hora de mostrar las consultas. Valor es ```{cliente}```.
-        No debes permitir que se puedan consultar los tiques para otro identificador que no coincida con ```{cliente}```
-        
-        A continuación te muestro un par de ejemplos de preguntas que te pueden hacer, caul debe ser la respuesta y cual la consulta generada:
-             - Ejemplo 1: 
-                 - Pregunta: Productos más consumidos
-                 - Respuesta: Aquí tienes los 10 productos que más se han consumido
-                 - Consulta: SELECT TOP 10 subcategoria, SUM(cantidad) AS total_consumido FROM Tickets_Analytics where idGrupo = ```{cliente}``` GROUP BY marcas ORDER BY total_consumido DESC ;
-             - Ejemplo 2:
-                 - Pregunta: Dime el restaurante donde más barato está el agua
-                 - Respuesta: Aquí tienes el ticket donde el agua está más barata
-                 - Consulta: SELECT TOP 1 idTicket, precio FROM Tickets_Analytics WHERE subcategoria = 'agua' ORDER BY precio ASC where idGrupo = ```{cliente}```;
-             - Ejemplo 3:
-                 - Pregunta: Tickets mayor precio
-                 - Respuesta: Aquí tienes el top 10 de los tickets de mayor precio
-                 - Consulta: SELECT TOP 10 idTicket, precio, url FROM Tickets_Analytics WHERE idGrupo = ```{cliente}``` ORDER BY precio DESC
-
-        
-        La primera vez quiero que saludes cordialmente y preguntes qué información acerca de los tickets desea conocer. 
-        
-        Una vez que se te pregunte algo debes devolver al usuario siempre una respuesta amable indicando que a continuaicón tiene una análisis de los datos y que tambien dispone
-        de una tabla con los datos solicitados y que puede visualizarlos en un gráfico.
-                    
-        Si pregunta cualquier otra cosa, responde amablemente que sólo ofreces información acerca de los tickes y muestrale alguno de los ejemplos anteriores.
-        
-        Si te preguntan en algún momento por las columnas devuelve también la consulta sql server que extrae los nombres de las columnas de una vista.
-        """}]
+        context = [{'role': 'system', 'content': bienvenida}]
 
         response = get_completion_from_messages(context)
         
@@ -465,8 +428,9 @@ def collect_messages(n_clicks,como_preguntar,tipologia, cliente,input_value, out
         
         conversacion.insert(0,mensaje_icono)
         
+        context.append({'role': 'user', 'content': contexto_inicial + f"Todas las consultas deben incluir el filtro idGrupo = ```{grupo}```"})
 
-        return conversacion, '', '', 0
+        return conversacion, '', '', '', 0
 
 
 def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0):
@@ -492,39 +456,11 @@ def button_send(input_value):
 
 @app.callback(
     Output('input', 'value',allow_duplicate=True),
-    [Input('eje-x', 'value')],
+    [Input('faqs', 'value')],
     prevent_initial_call=True
 )
-def update_user_input(eje_x):
-    return eje_x
-
-@app.callback(
-    Output('input', 'value'),
-    [Input({'type': 'dynamic-button', 'index': ALL,'value': ALL}, 'n_clicks')],
-    [State({"type": "dynamic-button", "index": ALL,'value': ALL}, "value")]
-
-)
-def update_input_box(button_clicks,valores):
-    ctx = callback_context
-    if button_clicks:
-
-        #btn_number=json.loads(ctx.triggered[0]['prop_id'].split('.')[0])["index"]
-        btn_value=json.loads(ctx.triggered[0]['prop_id'].split('.')[0])["value"]
-        return btn_value
-    return ""
-
-
-@app.callback(
-    [Output('tipologia', 'className'),Output('tipos-tickets','className')],
-    [Input('tipos-tickets', 'n_clicks')],
-)
-
-def tipos_tickets(n_clicks):
-    if n_clicks % 2 == 0 :  
-        return 'typologies-values', 'tickets-tipos'
-    else:        
-       return 'typologies-values2', 'tickets-tipos2'
-
+def update_user_input(faq_value):
+    return faq_value
 
 
 
@@ -621,7 +557,7 @@ def get_data():
             cursor.execute(query)
     
         except:    
-            query="SELECT TOP 10 * FROM Tickets_Analytics where idCliente = 'nothting';"
+            query=""
             cursor.execute(query)
     
          

@@ -340,51 +340,6 @@ width: 45%;
 
 }
 
-
-.typologies-tickets {
-  width: 100%;
-  height:35px;
-  display: flex;
-  margin-top:1rem;
-  margin-left:1rem;
-}
-
-.typologies-tickets button:hover {opacity: 1}
-
-.typologies-tickets img {
-	height:30px;
-}
-
-.typologies-values{
-	display:none;
-}
-
-.typologies-values2{
-	display:inline-block;
-}
-
-.tickets-tipos{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-right:1rem;
-	background-color:#fff;
-	border-color:#fff;
-}
-
-.tickets-tipos2{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-right:1rem;
-	background-color:#d6ecd5;
-	border-color:#d6ecd5;
-}
-
-
-
-
-
 	
 .dash-table-tooltip {
     width: fit-content;
