@@ -27,7 +27,7 @@ context = []
 conversacion = []
 consulta=""
 
-openai.api_key = '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'
+openai.api_key = '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'
 #openai.api_key = '62df70b9433343b6884ee0d786825dbf'
 
 servidor = Flask(__name__)
@@ -462,6 +462,21 @@ def button_send(input_value):
 def update_user_input(faq_value):
     return faq_value
 
+
+@app.callback(
+    Output('input', 'value'),
+    [Input({'type': 'dynamic-button', 'index': ALL,'value': ALL}, 'n_clicks')],
+    [State({"type": "dynamic-button", "index": ALL,'value': ALL}, "value")]
+
+)
+def update_input_box(button_clicks,valores):
+    ctx = callback_context
+    if button_clicks:
+
+        #btn_number=json.loads(ctx.triggered[0]['prop_id'].split('.')[0])["index"]
+        btn_value=json.loads(ctx.triggered[0]['prop_id'].split('.')[0])["value"]
+        return btn_value
+    return ""
 
 
 ### Parte de la web donde se meustra la tabla de la consulta realizada
